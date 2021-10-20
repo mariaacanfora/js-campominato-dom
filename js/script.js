@@ -42,9 +42,7 @@ function getCellsNum(choosenLevel){
 
 
 function createGrid (cellsNum){
-    let row = document.createElement("div");
-    row.classList.add("row");
-    gridContainer.append(row);
+    gridContainer.classList.add("d-flex", "flex-wrap");
     let cellsPerRow = cellsNum / Math.sqrt(cellsNum);
     let cell;
 
@@ -55,7 +53,7 @@ function createGrid (cellsNum){
         cell.style.height = (100 / cellsPerRow) + "%";
         cell.classList.add("border", "border-dark", "d-flex", "justify-content-center", "align-items-center", "text-decoration-none", "text-dark", "hover");
         cell.textContent = i;
-        row.append(cell);  
+        gridContainer.append(cell);  
 
         cell.addEventListener("click", focusClick);
     }

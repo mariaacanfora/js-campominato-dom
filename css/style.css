@@ -22,6 +22,8 @@
 /* main */
 #grid-container{
     width: 500px;
+    height: 500px;
+    margin: auto;
 }
 
 .bg-main{
