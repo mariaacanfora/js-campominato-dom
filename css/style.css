@@ -6,7 +6,7 @@
 
 /* header */
 .container-fluid{
-    height: 10vh;
+    height: 50px;
 }
 
 .container-fluid a{
@@ -20,9 +20,13 @@
 }
 
 /* main */
+main{
+    padding: 100px 0;
+}
+
 #grid-container{
-    width: 500px;
-    height: 500px;
+    width: 550px;
+    height: 550px;
     margin: auto;
     position: relative;
 }
@@ -54,11 +58,21 @@ a:hover{
     left: 0;
 }
 
-/* footer */
-footer{
-    height: 10vh;
+.overlay-winner{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(rgb(66, 255, 41), transparent);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
 }
 
+/* footer */
 .footer-vrt-align{
-    line-height: 10vh;
+    line-height: 50px;
 }

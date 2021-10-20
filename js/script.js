@@ -106,33 +106,32 @@ function createGrid(cellsNum, bombList) {
 /**
  * Cambia gli stili della cella una volta clickata
  */
-function focusClick(bombList) {
+function focusClick(bombList, cell) {
     //console.log(bombList);
     this.classList.toggle("focus");
     this.classList.toggle("text-dark");
     this.classList.toggle("hover");
 
     let currentNumber = (parseInt(this.textContent));
-
+    let clickNum;
     let gameOver = false;
+
     if (bombList.includes(currentNumber)) {
         this.classList.add("bg-danger");
         gameOver = true;
     }
 
+    clickNum = counterClick(j, counter, gameOver);
+    
     if (gameOver) {
         const overlay = document.createElement("div");
         gridContainer.append(overlay);
         overlay.classList.add("overlay");
         overlay.innerHTML = `<h2>Hai perso!</h2>
+        <h4>Il tuo punteggio è: ${clickNum}</h4>
         <h4>Per giocare di nuovo ricarica la pagina o premi nuovamente Play!</h4>`
+        console.log(bombList);
     }
-
-    counterClick(j, counter, gameOver);
-
-
-    //console.log(this.textContent);
-
 
 }
 
@@ -189,11 +188,16 @@ function counterClick(j, counter, gameOver) {
     if (counter === maxClick && gameOver === false) {
         const overlay = document.createElement("div");
         gridContainer.append(overlay);
-        overlay.classList.add("overlay");
+        overlay.classList.add("overlay-winner");
         overlay.innerHTML = `<h2>Hai vinto!</h2>
         <h4>Per giocare di nuovo ricarica la pagina o premi nuovamente Play!</h4>`
     }
 
     return counter;
+    
+}
+
+
+function showBombs(bombList) {
     
 }
