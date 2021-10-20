@@ -17,13 +17,35 @@ playBtn.addEventListener("click", function(){
     console.log(cellsNum);
     
     //creo la griglia formata da celle quadrate ed avente numero righe = numero colonne --> uso la function createGrid.
+    //mentre creo la griglia tramite createGrid, nel frattempo creo anche la lista di bombe. 
     createGrid(cellsNum);
-    
     
 })
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************************************************/
 /* FUNCTIONS */
+/*****************************************************/
+
+
+/**
+ * Associa ad ogni livello di difficoltà la rispettiva griglia col numero esatto di caselle 
+ * 
+ * @param {number} choosenLevel - indica il livello di difficoltà scelto dall'utente 
+ * @returns {number} - restituisce il numero di celle relativo al livello di difficoltà
+ */
 function getCellsNum(choosenLevel){
     let cellsNum;
     switch (parseInt(choosenLevel)) {
@@ -40,9 +62,13 @@ function getCellsNum(choosenLevel){
     return cellsNum;
 }
 
-
+/**
+ * Restituisce la griglia con le caselle clickabili 
+ * 
+ * @param {number} cellsNum - numero di celle che deve contenere in totale la griglia 
+ * @returns 
+ */
 function createGrid (cellsNum){
-    gridContainer.classList.add("d-flex", "flex-wrap");
     let cellsPerRow = cellsNum / Math.sqrt(cellsNum);
     let cell;
 
@@ -58,9 +84,16 @@ function createGrid (cellsNum){
         cell.addEventListener("click", focusClick);
     }
     
+    //creo la lista di bombe
+    bombList(cellsNum);
+
     return cell;
 }
 
+
+/**
+ * Cambia gli stili della cella una volta clickata
+ */
 function focusClick () { 
 
     this.classList.toggle("focus");
@@ -68,4 +101,32 @@ function focusClick () {
     this.classList.toggle("hover");
 
 
+}
+
+/**
+ * Returns a random number between minValue and maxValue
+ * @param {number} minValue rappresenta il limite inferiore (incluso) dell'intervallo entro cui voglio generare il numero random
+ * @param {number} maxValue rappresenta il limite superiore (incluso) dell'intervallo entro cui voglio generare il numero random
+ */
+ function randomNumber(minValue, maxValue) {
+    return Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
+}
+
+
+function bombList(cellsNum, ){
+    let bombList = [];
+
+    while (bombList.length<16){
+        let currentBomb = randomNumber(1, cellsNum);
+        
+        let thereIsBomb = bombList.includes(currentBomb);
+
+        if (!thereIsBomb){
+            bombList.push(currentBomb);
+        }
+        
+        
+    }
+
+    console.log(bombList.sort( (a, b) => a - b ) );
 }
