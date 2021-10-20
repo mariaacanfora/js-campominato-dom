@@ -1,28 +1,36 @@
 const difficultyLevels = document.getElementById("difficulty-levels");
 const playBtn = document.getElementById("play-btn");
 const gridContainer = document.getElementById("grid-container");
+let maxClick;
+let j = [];
+let counter;
 
 console.log(difficultyLevels, playBtn);
 
-playBtn.addEventListener("click", function(){
+playBtn.addEventListener("click", function () {
     //resetto il contenuto eventualmente già esistente all'interno della griglia
     gridContainer.innerHTML = "";
 
     //percepisco il livello scelto dall'utente
     const choosenLevel = difficultyLevels.value;
-    console.log(choosenLevel);
+    console.log("Livello scelto: " + choosenLevel);
 
     //tramite la function getCellsNum ottengo il numero di celle che deve contenere la griglia di gioco
     cellsNum = getCellsNum(choosenLevel);
-    console.log(cellsNum);
-    
-    
+    console.log("Numero celle nella griglia: " + cellsNum);
+
+    //calcolo il numero massimo di click che può compiere l'utente
+    //maxClick = cellsNum - 16;
+    maxClick = 3;
+    console.log("Numero massimo di click: " + maxClick);
+
+
     //creo la lista di bombe
     let bombList = createBombList(cellsNum);
-    
+
     //creo la griglia formata da celle quadrate ed avente numero righe = numero colonne --> uso la function createGrid.
     createGrid(cellsNum, bombList);
-    
+
 })
 
 
@@ -49,19 +57,20 @@ playBtn.addEventListener("click", function(){
  * @param {number} choosenLevel - indica il livello di difficoltà scelto dall'utente 
  * @returns {number} - restituisce il numero di celle relativo al livello di difficoltà
  */
-function getCellsNum(choosenLevel){
+function getCellsNum(choosenLevel) {
     let cellsNum;
     switch (parseInt(choosenLevel)) {
         case 1:
             cellsNum = 100;
             break;
-        case 2: 
+        case 2:
             cellsNum = 81;
             break;
         case 3:
             cellsNum = 49;
             break;
     }
+    j = [];
     return cellsNum;
 }
 
@@ -71,9 +80,11 @@ function getCellsNum(choosenLevel){
  * @param {number} cellsNum - numero di celle che deve contenere in totale la griglia 
  * @returns 
  */
-function createGrid (cellsNum, bombList){
+function createGrid(cellsNum, bombList) {
     let cellsPerRow = cellsNum / Math.sqrt(cellsNum);
     let cell;
+
+
 
     for (let i = 1; i <= cellsNum; i++) {
         cell = document.createElement("a");
@@ -82,14 +93,12 @@ function createGrid (cellsNum, bombList){
         cell.style.height = (100 / cellsPerRow) + "%";
         cell.classList.add("border", "border-dark", "d-flex", "justify-content-center", "align-items-center", "text-decoration-none", "text-dark", "hover");
         cell.textContent = i;
-        gridContainer.append(cell);  
+        gridContainer.append(cell);
 
-        cell.addEventListener("click", function(){
+        cell.addEventListener("click", function () {
             focusClick.call(this, bombList);
         });
     }
-    
-       
     return cell;
 }
 
@@ -97,9 +106,8 @@ function createGrid (cellsNum, bombList){
 /**
  * Cambia gli stili della cella una volta clickata
  */
-function focusClick (bombList) { 
+function focusClick(bombList) {
     //console.log(bombList);
-
     this.classList.toggle("focus");
     this.classList.toggle("text-dark");
     this.classList.toggle("hover");
@@ -107,12 +115,12 @@ function focusClick (bombList) {
     let currentNumber = (parseInt(this.textContent));
 
     let gameOver = false;
-    if (bombList.includes(currentNumber)){
-       this.classList.add("bg-danger");
-       gameOver = true;
+    if (bombList.includes(currentNumber)) {
+        this.classList.add("bg-danger");
+        gameOver = true;
     }
 
-    if (gameOver){
+    if (gameOver) {
         const overlay = document.createElement("div");
         gridContainer.append(overlay);
         overlay.classList.add("overlay");
@@ -120,9 +128,11 @@ function focusClick (bombList) {
         <h4>Per giocare di nuovo ricarica la pagina o premi nuovamente Play!</h4>`
     }
 
+    counterClick(j, counter, gameOver);
+
 
     //console.log(this.textContent);
-    
+
 
 }
 
@@ -131,7 +141,7 @@ function focusClick (bombList) {
  * @param {number} minValue rappresenta il limite inferiore (incluso) dell'intervallo entro cui voglio generare il numero random
  * @param {number} maxValue rappresenta il limite superiore (incluso) dell'intervallo entro cui voglio generare il numero random
  */
- function randomNumber(minValue, maxValue) {
+function randomNumber(minValue, maxValue) {
     return Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
 }
 
@@ -143,19 +153,47 @@ function focusClick (bombList) {
  * @param {number} cellsNum - numero di celle che deve contenere in totale la griglia 
  * @returns 
  */
-function createBombList(cellsNum){
+function createBombList(cellsNum) {
     let bombList = [];
-    while (bombList.length<16){
+    while (bombList.length < 16) {
         let currentBomb = randomNumber(1, cellsNum);
-        
+
         let thereIsBomb = bombList.includes(currentBomb);
 
-        if (!thereIsBomb){
+        if (!thereIsBomb) {
             bombList.push(currentBomb);
         }
     }
 
-    console.log(bombList.sort( (a, b) => a - b ) );
+    console.log(bombList.sort((a, b) => a - b));
 
     return bombList;
+
+
+}
+
+
+/**
+ * Restituisce il numero di click effettuati, se questi non sono stati su bombe e raggiungono il numero di click max allora appare messaggio di vittoria
+ * 
+ * @param {Array} j - array la cui lunghezza (counter) mi permette di definire i numeri di click effettuati
+ * @param {number} counter - lunghezza dell'array j, definisce il numero di click
+ * @param {boolean} gameOver - booleano che definisce se ho clickato una bomba
+ */
+function counterClick(j, counter, gameOver) {
+    j.push(0);
+    console.log(j);
+    counter = j.length;
+    console.log(counter);
+
+    if (counter === maxClick && gameOver === false) {
+        const overlay = document.createElement("div");
+        gridContainer.append(overlay);
+        overlay.classList.add("overlay");
+        overlay.innerHTML = `<h2>Hai vinto!</h2>
+        <h4>Per giocare di nuovo ricarica la pagina o premi nuovamente Play!</h4>`
+    }
+
+    return counter;
+    
 }
