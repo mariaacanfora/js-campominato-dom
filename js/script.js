@@ -16,9 +16,12 @@ playBtn.addEventListener("click", function(){
     cellsNum = getCellsNum(choosenLevel);
     console.log(cellsNum);
     
+    
+    //creo la lista di bombe
+    let bombList = createBombList(cellsNum);
+    
     //creo la griglia formata da celle quadrate ed avente numero righe = numero colonne --> uso la function createGrid.
-    //mentre creo la griglia tramite createGrid, nel frattempo creo anche la lista di bombe. 
-    createGrid(cellsNum);
+    createGrid(cellsNum, bombList);
     
 })
 
@@ -68,7 +71,7 @@ function getCellsNum(choosenLevel){
  * @param {number} cellsNum - numero di celle che deve contenere in totale la griglia 
  * @returns 
  */
-function createGrid (cellsNum){
+function createGrid (cellsNum, bombList){
     let cellsPerRow = cellsNum / Math.sqrt(cellsNum);
     let cell;
 
@@ -81,12 +84,12 @@ function createGrid (cellsNum){
         cell.textContent = i;
         gridContainer.append(cell);  
 
-        cell.addEventListener("click", focusClick);
+        cell.addEventListener("click", function(){
+            focusClick.call(this, bombList);
+        });
     }
     
-    //creo la lista di bombe
-    bombList(cellsNum);
-
+       
     return cell;
 }
 
@@ -94,12 +97,32 @@ function createGrid (cellsNum){
 /**
  * Cambia gli stili della cella una volta clickata
  */
-function focusClick () { 
+function focusClick (bombList) { 
+    //console.log(bombList);
 
     this.classList.toggle("focus");
     this.classList.toggle("text-dark");
     this.classList.toggle("hover");
 
+    let currentNumber = (parseInt(this.textContent));
+
+    let gameOver = false;
+    if (bombList.includes(currentNumber)){
+       this.classList.add("bg-danger");
+       gameOver = true;
+    }
+
+    if (gameOver){
+        const overlay = document.createElement("div");
+        gridContainer.append(overlay);
+        overlay.classList.add("overlay");
+        overlay.innerHTML = `<h2>Hai perso!</h2>
+        <h4>Per giocare di nuovo ricarica la pagina o premi nuovamente Play!</h4>`
+    }
+
+
+    //console.log(this.textContent);
+    
 
 }
 
@@ -113,9 +136,15 @@ function focusClick () {
 }
 
 
-function bombList(cellsNum, ){
+/**
+ * 
+ * Restituisce un array contente i numeri delle bombe
+ * 
+ * @param {number} cellsNum - numero di celle che deve contenere in totale la griglia 
+ * @returns 
+ */
+function createBombList(cellsNum){
     let bombList = [];
-
     while (bombList.length<16){
         let currentBomb = randomNumber(1, cellsNum);
         
@@ -124,9 +153,9 @@ function bombList(cellsNum, ){
         if (!thereIsBomb){
             bombList.push(currentBomb);
         }
-        
-        
     }
 
     console.log(bombList.sort( (a, b) => a - b ) );
+
+    return bombList;
 }
