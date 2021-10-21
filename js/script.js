@@ -20,8 +20,7 @@ playBtn.addEventListener("click", function () {
     console.log("Numero celle nella griglia: " + cellsNum);
 
     //calcolo il numero massimo di click che può compiere l'utente
-    //maxClick = cellsNum - 16;
-    maxClick = 3;
+    maxClick = cellsNum - 16;
     console.log("Numero massimo di click: " + maxClick);
 
 
@@ -91,7 +90,7 @@ function createGrid(cellsNum, bombList) {
         cell.href = "#"
         cell.style.width = (100 / cellsPerRow) + "%";
         cell.style.height = (100 / cellsPerRow) + "%";
-        cell.classList.add("border", "border-dark", "d-flex", "justify-content-center", "align-items-center", "text-decoration-none", "text-dark", "hover");
+        cell.classList.add("border", "border-dark", "d-flex", "justify-content-center", "align-items-center", "text-decoration-none", "text-dark", "hover", "cell");
         cell.textContent = i;
         gridContainer.append(cell);
 
@@ -121,7 +120,7 @@ function focusClick(bombList, cell) {
         gameOver = true;
     }
 
-    clickNum = counterClick(j, counter, gameOver);
+    clickNum = parseInt(counterClick(j, counter, gameOver, bombList)) - 1;
     
     if (gameOver) {
         const overlay = document.createElement("div");
@@ -130,7 +129,9 @@ function focusClick(bombList, cell) {
         overlay.innerHTML = `<h2>Hai perso!</h2>
         <h4>Il tuo punteggio è: ${clickNum}</h4>
         <h4>Per giocare di nuovo ricarica la pagina o premi nuovamente Play!</h4>`
-        console.log(bombList);
+        console.log("game over:" + bombList);
+
+        showBombs(bombList);
     }
 
 }
@@ -179,7 +180,7 @@ function createBombList(cellsNum) {
  * @param {number} counter - lunghezza dell'array j, definisce il numero di click
  * @param {boolean} gameOver - booleano che definisce se ho clickato una bomba
  */
-function counterClick(j, counter, gameOver) {
+function counterClick(j, counter, gameOver, bombList) {
     j.push(0);
     console.log(j);
     counter = j.length;
@@ -191,6 +192,8 @@ function counterClick(j, counter, gameOver) {
         overlay.classList.add("overlay-winner");
         overlay.innerHTML = `<h2>Hai vinto!</h2>
         <h4>Per giocare di nuovo ricarica la pagina o premi nuovamente Play!</h4>`
+
+        showBombs(bombList);
     }
 
     return counter;
@@ -199,5 +202,11 @@ function counterClick(j, counter, gameOver) {
 
 
 function showBombs(bombList) {
-    
+    const cellsList = gridContainer.querySelectorAll(".cell");
+
+    for (let i = 0; i < bombList.length; i++) {
+        const bomb = bombList[i];
+        
+        cellsList[bomb - 1].classList.add("bg-danger");
+    }
 }
